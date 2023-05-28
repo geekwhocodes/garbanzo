@@ -20,8 +20,7 @@
 			],
 			"dockerRun": {
 				"image": "dcrdb:latest",
-				"containerName": "dcrdb",
-				"command": "",
+				"remove": true,
 				"env": {
 					"POSTGRES_USER": "postgres",
 					"POSTGRES_PASSWORD":"postgres"
@@ -51,7 +50,24 @@
 				"docker-build-app",
 				"docker-run: db"
 			],
+			"dockerRun": {
+				"image": "dcrapi:latest",
+				"remove": true,
+				"ports": [
+					{
+						"containerPort": 8000,
+						"hostPort": 8001
+					}
+				],
+				"volumes": [
+					{
+						"localPath": "${workspaceFolder}/src",
+						"containerPath": "/usr/src/app"
+					}
+				]
+			}
 			"python": {
+				"wait": true,
 				"args": [
 					"app.main:app",
 					"--host",
@@ -60,14 +76,6 @@
 					"8000" 
 				],
 				"module": "uvicorn"
-			},
-			"dockerRun": {
-				"ports": [
-					{
-						"containerPort": 8000,
-						"hostPort": 8001
-					}
-				]
 			}
 		}
 	]
