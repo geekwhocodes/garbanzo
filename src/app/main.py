@@ -1,10 +1,12 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 import uvicorn
+
+from app.config import Settings, get_settings
 
 app : FastAPI = FastAPI()
 
 @app.get("/item")
-def read_item() -> int:
+def read_item(settings: Settings = Depends(get_settings)) -> int:
     return 1
 
 @app.get("/health")
