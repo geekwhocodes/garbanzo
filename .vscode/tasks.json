@@ -3,7 +3,39 @@
 	"tasks": [
 		{
 			"type": "docker-build",
-			"label": "docker-build",
+			"label": "docker-build-db",
+			"platform": "python",
+			"dockerBuild": {
+				"tag": "dcrdb:latest",
+				"dockerfile": "${workspaceFolder}/src/db/Dockerfile",
+				"context": "${workspaceFolder}/src/db",
+				"pull": false
+			}
+		},
+		{
+			"type": "docker-run",
+			"label": "docker-run: db",
+			"dependsOn": [
+				"docker-build-db"
+			],
+			"dockerRun": {
+				"image": "dcrdb:latest",
+				"containerName": "dcrdb",
+				"command": "",
+				"env": {
+					"POSTGRES_USER": "postgres",
+					"POSTGRES_PASSWORD":"postgres"
+				},
+				"ports": [
+					{
+						"containerPort": 5432
+					}
+				]
+			}
+		},
+		{
+			"type": "docker-build",
+			"label": "docker-build-app",
 			"platform": "python",
 			"dockerBuild": {
 				"tag": "dcrapi:latest",
@@ -16,7 +48,8 @@
 			"type": "docker-run",
 			"label": "docker-run: debug",
 			"dependsOn": [
-				"docker-build"
+				"docker-build-app",
+				"docker-run: db"
 			],
 			"python": {
 				"args": [
